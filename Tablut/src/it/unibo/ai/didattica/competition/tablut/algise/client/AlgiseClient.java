@@ -77,7 +77,7 @@ public class AlgiseClient extends TablutClient {
 
 					/*TODO
                     // cerchiamo la mossa migliore
-                    Action a = findBestMove(tablutGame, state);
+                    Action a = findBestMove(gameRules, state);
 
 
                     System.out.println("\nAzione selezionata: " + a.toString());
@@ -120,7 +120,7 @@ public class AlgiseClient extends TablutClient {
 
 					/*TODO
 					// cerchiamo la mossa migliore
-					Action a = findBestMove(tablutGame, state);
+					Action a = findBestMove(gameRules, state);
 
 
 					System.out.println("\nAzione selezionata: " + a.toString());
