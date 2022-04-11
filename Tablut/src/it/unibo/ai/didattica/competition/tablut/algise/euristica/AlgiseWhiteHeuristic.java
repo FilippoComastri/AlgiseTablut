@@ -59,7 +59,20 @@ public class AlgiseWhiteHeuristic {
 	private double FREE_WAY_KING_WEIGHT = 20.0;
 	private double BLACK_NEAR_KING_WEIGHT = 6.0;
 	private double WHITE_NEAR_KING_WEIGHT = 9.0;*/
-		return 0.0;
+		
+		/*
+		 * private int pawnsB; // pedine NERE attuali
+	private int pawnsW; // pedine BIANCHE attuali
+	private int blackRisk; // pedine NERE a rischio cattura (una bianca, un accampamento o trono vicina) 
+	private int freeWayForKing; // vie libere per il RE
+	private Coordinate kingCoordinate;
+	private int blackNearKing; // pedine NERE vicine al RE
+	private int whiteNearKing; // pedine BIANCHE vicine al RE
+		 */
+		result = pawnsB*BLACK_NEAR_KING_WEIGHT+pawnsW*REMAINING_WHITE_WEIGHT+blackRisk*BLACK_RISCK_WEIGHT+
+				freeWayForKing*FREE_WAY_KING_WEIGHT+blackNearKing*BLACK_NEAR_KING_WEIGHT+
+				whiteNearKing*WHITE_NEAR_KING_WEIGHT;
+		return result;
 	}
 	// TODO: UNIFICARE il tutto in un unico ciclo
 	

@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import it.unibo.ai.didattica.competition.tablut.algise.euristica.AlgiseBlackHeuristic;
+import it.unibo.ai.didattica.competition.tablut.algise.euristica.AlgiseWhiteHeuristic;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.exceptions.*;
@@ -954,17 +956,13 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 				|| (turn.equals(State.Turn.WHITE) && state.getTurn().equals(State.Turn.BLACKWIN)))
 			return Double.NEGATIVE_INFINITY;
 		
-		/*TODO scommentare quando abbiamo fatto euristica
-		 * Heuristics heuristics = null;
 		if (turn.equals(State.Turn.WHITE)) {
-			heuristics = new WhiteHeuristics(state);
+			AlgiseWhiteHeuristic algiseH= new AlgiseWhiteHeuristic(state);
+			return  algiseH.evaluateState();
 		} else {
-			heuristics = new BlackHeuristics(state);
+			AlgiseBlackHeuristic algiseH= new AlgiseBlackHeuristic(state);
+			return  algiseH.evaluateState();
 		}
-		return  heuristics.evaluateState();
-		*/
-		
-		return 0.0 ;
 	}
 	
 	/**

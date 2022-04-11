@@ -31,4 +31,9 @@ public class AlgiseBlackHeuristic {
 
 	}
 
+	public double evaluateState() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

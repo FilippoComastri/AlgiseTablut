@@ -8,6 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/aima-core-3.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/aima-core-3.0.0.jar" sourcepath="C:/Users/fabio/.m2/repository/com/googlecode/aima-java/aima-core/3.0.0/aima-core-3.0.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

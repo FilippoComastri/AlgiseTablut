@@ -3,6 +3,7 @@ package it.unibo.ai.didattica.competition.tablut.algise.client;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import it.unibo.ai.didattica.competition.tablut.algise.euristica.AlgiseAlphaBeta;
 import it.unibo.ai.didattica.competition.tablut.client.TablutClient;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.GameAshtonTablut;
@@ -10,7 +11,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 public class AlgiseClient extends TablutClient {
 
-
+	
 
 	public AlgiseClient(String player, String name, int timeout, String ipAddress) 
 			throws UnknownHostException, IOException {
@@ -19,7 +20,17 @@ public class AlgiseClient extends TablutClient {
 
 	public static void main(String[] args) throws IOException {
 		String name = "Algise" ; 
+		//DEFAULT DI PROVA
+		
+		String player = "WHITE" ;
+		int timeout = 60;
+		String ipServer = "localhost";
 
+		AlgiseClient client = new AlgiseClient(player,name,timeout,ipServer);
+		client.run();
+		
+		
+		/*
 		if (args.length != 3) {
 			System.out.println("ALGISE dice : NO! Moc sa fet!! Brisa fer l'esen!! Gnurant!!");
 			System.out.println("USAGE: Il pistolotto dev'essere invocato ./runmyplayer.sh <WHITE|BLACK> <timeout> <ip_server>");
@@ -32,6 +43,7 @@ public class AlgiseClient extends TablutClient {
 			AlgiseClient client = new AlgiseClient(player,name,timeout,ipServer);
 			client.run();
 		}
+		*/
 	}
 
 
@@ -75,7 +87,7 @@ public class AlgiseClient extends TablutClient {
 
 					System.out.println("\n Cercando la prossima mossa... ");
 
-					/*TODO
+					
                     // cerchiamo la mossa migliore
                     Action a = findBestMove(gameRules, state);
 
@@ -86,7 +98,7 @@ public class AlgiseClient extends TablutClient {
                     } catch (ClassNotFoundException | IOException e) {
                         e.printStackTrace();
                     }
-					 */
+					 
 				}
 
 				// se è il turno dell'avversario (BLACK)
@@ -119,7 +131,7 @@ public class AlgiseClient extends TablutClient {
 					System.out.println("\n Cercando la prossima mossa... ");
 
 					/*TODO
-					// cerchiamo la mossa migliore
+					//cerchiamo la mossa migliore
 					Action a = findBestMove(gameRules, state);
 
 
@@ -157,6 +169,11 @@ public class AlgiseClient extends TablutClient {
 			}
 		}
 
+	}
+
+	private Action findBestMove(GameAshtonTablut gameRules, State state) {
+		AlgiseAlphaBeta search = new AlgiseAlphaBeta(gameRules, Double.MIN_VALUE, Double.MAX_VALUE, this.timeout-2);
+		return search.makeDecision(state);
 	}
 
 }
