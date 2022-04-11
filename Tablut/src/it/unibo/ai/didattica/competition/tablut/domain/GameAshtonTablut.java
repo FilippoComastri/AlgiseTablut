@@ -796,7 +796,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		actions.addAll(getActionsDown(row,column,state));
 		actions.addAll(getActionsRight(row,column,state));
 		actions.addAll(getActionsLeft(row,column,state));
-		
+		System.out.println("SOUT: "+actions.size());
 		return actions ;
 	}
 	
@@ -804,7 +804,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		boolean fine = false ;
 		List<Action> actions = new ArrayList<>();
 		String initialBox = state.getBox(row,column);
-		for (int i = row ; i>=0 && !fine; i--) {
+		for (int i = row+1 ; i>=0 && !fine; i--) {
 			String destBox = state.getBox(i, column);
 			Action nextAction = null;
 			try {
@@ -817,7 +817,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 			if(fine==false)
 				actions.add(nextAction);
 		}
-
+		System.out.println("SOUT getActionsUp ("+row + " "+column+"): "+actions.size());
 		return actions ;
 		
 	}
@@ -826,7 +826,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		boolean fine = false ;
 		List<Action> actions = new ArrayList<>();
 		String initialBox = state.getBox(row,column);
-		for (int i = row ; i<=state.getBoard().length && !fine; i++) {
+		for (int i = row+1 ; i<=state.getBoard().length && !fine; i++) {
 			String destBox = state.getBox(i, column);
 			Action nextAction = null;
 			try {
@@ -839,6 +839,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 			if(fine==false)
 				actions.add(nextAction);
 		}
+		System.out.println("SOUT getActionsDown: ("+row + " "+column+"): "+actions.size());
 		return actions ;
 		
 	}
@@ -846,11 +847,12 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		boolean fine = false ;
 		List<Action> actions = new ArrayList<>();
 		String initialBox = state.getBox(row,column);
-		for (int i = column ; i<=state.getBoard()[0].length && !fine; i++) {
+		for (int i = column+1 ; i<=state.getBoard().length && !fine; i++) {
 			String destBox = state.getBox(row, i);
 			Action nextAction = null;
 			try {
 				nextAction = new Action(initialBox,destBox,state.getTurn());
+				System.out.println("SOUT: Action "+nextAction);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -859,13 +861,14 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 			if(fine==false)
 				actions.add(nextAction);
 		}
+		System.out.println("SOUT getActionsRight: ("+row + " "+column+"): "+actions.size());
 		return actions ;
 	}
 	private List<Action> getActionsLeft(int row, int column, State state) {
 		boolean fine = false ;
 		List<Action> actions = new ArrayList<>();
 		String initialBox = state.getBox(row,column);
-		for (int i = column ; i>=0 && !fine; i--) {
+		for (int i = column+1 ; i>=0 && !fine; i--) {
 			String destBox = state.getBox(row, i);
 			Action nextAction = null;
 			try {
@@ -878,6 +881,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 			if(fine==false)
 				actions.add(nextAction);
 		}
+		System.out.println("SOUT getActionsLeft: ("+row + " "+column+"): "+actions.size());
 		return actions ;
 	}
 
