@@ -328,13 +328,138 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		return state;
 	}
 	
-	private boolean checkMoveBoolean(State state, Action a) {
-		try {
-			this.checkMove(state.clone(), a);
-		} catch(BoardException | ActionException | StopException | PawnException | DiagonalException | ClimbingException | ThroneException | OccupitedException | ClimbingCitadelException | CitadelException e) {
+	private boolean checkMoveBoolean(State _state, Action a) {
+		/* controllo la mossa
+		if (a.getTo().length() != 2 || a.getFrom().length() != 2) {
+			return false;
+		}*/
+		State state = _state.clone();
+		int columnFrom = a.getColumnFrom();
+		int columnTo = a.getColumnTo();
+		int rowFrom = a.getRowFrom();
+		int rowTo = a.getRowTo();
+
+		// controllo se sono fuori dal tabellone
+		if (columnFrom > state.getBoard().length - 1 || rowFrom > state.getBoard().length - 1
+				|| rowTo > state.getBoard().length - 1 || columnTo > state.getBoard().length - 1 || columnFrom < 0
+				|| rowFrom < 0 || rowTo < 0 || columnTo < 0) {
 			return false;
 		}
-		
+
+		// controllo che non vada sul trono
+		if (state.getPawn(rowTo, columnTo).equalsPawn(State.Pawn.THRONE.toString())) {
+			return false;
+		}
+
+		// controllo la casella di arrivo
+		if (!state.getPawn(rowTo, columnTo).equalsPawn(State.Pawn.EMPTY.toString())) {
+			return false;
+		}
+		// controllo di non entrare in una citadels
+		if (this.citadels.contains(state.getBox(rowTo, columnTo))
+				&& !this.citadels.contains(state.getBox(rowFrom, columnFrom))) {
+			return false;
+		}
+		if (this.citadels.contains(state.getBox(rowTo, columnTo))
+				&& this.citadels.contains(state.getBox(rowFrom, columnFrom))) {
+			if (rowFrom == rowTo) {
+				if (columnFrom - columnTo > 5 || columnFrom - columnTo < -5) {
+					return false;
+				}
+			} else {
+				if (rowFrom - rowTo > 5 || rowFrom - rowTo < -5) {
+					return false;
+				}
+			}
+
+		}
+
+		//DECIDERE SE TOGLIERE
+		/* controllo se cerco di stare fermo
+		if (rowFrom == rowTo && columnFrom == columnTo) {
+			return false;
+		}
+
+		// controllo se sto muovendo una pedina giusta
+		if (state.getTurn().equalsTurn(State.Turn.WHITE.toString())) {
+			if (!state.getPawn(rowFrom, columnFrom).equalsPawn("W")
+					&& !state.getPawn(rowFrom, columnFrom).equalsPawn("K")) {
+				return false;
+			}
+		}
+		if (state.getTurn().equalsTurn(State.Turn.BLACK.toString())) {
+			if (!state.getPawn(rowFrom, columnFrom).equalsPawn("B")) {
+				return false;
+			}
+		}
+
+		// controllo di non muovere in diagonale
+		if (rowFrom != rowTo && columnFrom != columnTo) {
+			return false;
+		}*/
+
+		// controllo di non scavalcare pedine
+		if (rowFrom == rowTo) {
+			if (columnFrom > columnTo) {
+				for (int i = columnTo; i < columnFrom; i++) {
+					if (!state.getPawn(rowFrom, i).equalsPawn(State.Pawn.EMPTY.toString())) {
+						if (state.getPawn(rowFrom, i).equalsPawn(State.Pawn.THRONE.toString())) {
+							return false;
+						} else {
+							return false;
+						}
+					}
+					if (this.citadels.contains(state.getBox(rowFrom, i))
+							&& !this.citadels.contains(state.getBox(a.getRowFrom(), a.getColumnFrom()))) {
+						return false;
+					}
+				}
+			} else {
+				for (int i = columnFrom + 1; i <= columnTo; i++) {
+					if (!state.getPawn(rowFrom, i).equalsPawn(State.Pawn.EMPTY.toString())) {
+						if (state.getPawn(rowFrom, i).equalsPawn(State.Pawn.THRONE.toString())) {
+							return false;
+						} else {
+							return false;
+						}
+					}
+					if (this.citadels.contains(state.getBox(rowFrom, i))
+							&& !this.citadels.contains(state.getBox(a.getRowFrom(), a.getColumnFrom()))) {
+						return false;
+					}
+				}
+			}
+		} else {
+			if (rowFrom > rowTo) {
+				for (int i = rowTo; i < rowFrom; i++) {
+					if (!state.getPawn(i, columnFrom).equalsPawn(State.Pawn.EMPTY.toString())) {
+						if (state.getPawn(i, columnFrom).equalsPawn(State.Pawn.THRONE.toString())) {
+							return false;
+						} else {
+							return false;
+						}
+					}
+					if (this.citadels.contains(state.getBox(i, columnFrom))
+							&& !this.citadels.contains(state.getBox(a.getRowFrom(), a.getColumnFrom()))) {
+						return false;
+					}
+				}
+			} else {
+				for (int i = rowFrom + 1; i <= rowTo; i++) {
+					if (!state.getPawn(i, columnFrom).equalsPawn(State.Pawn.EMPTY.toString())) {
+						if (state.getPawn(i, columnFrom).equalsPawn(State.Pawn.THRONE.toString())) {
+							return false;
+						} else {
+							return false;
+						}
+					}
+					if (this.citadels.contains(state.getBox(i, columnFrom))
+							&& !this.citadels.contains(state.getBox(a.getRowFrom(), a.getColumnFrom()))) {
+						return false;
+					}
+				}
+			}
+		}
 		return true;
 		
 	}
