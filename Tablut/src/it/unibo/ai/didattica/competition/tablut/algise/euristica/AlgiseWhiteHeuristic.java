@@ -25,6 +25,10 @@ public class AlgiseWhiteHeuristic {
 	private Coordinate kingCoordinate;
 	private int blackNearKing; // pedine NERE vicine al RE
 	private int whiteNearKing; // pedine BIANCHE vicine al RE
+	//TODO King at risk 
+	//TODO Valore alle posizioni
+	//TODO Vedere se il RE c'è oppure no
+	//TODO Provare HASH MAP per non ricalcolare euristica di stati
 	
 	// PESI
 	private double REMAINING_BLACK_WEIGHT = 5.0;
@@ -33,6 +37,7 @@ public class AlgiseWhiteHeuristic {
 	private double FREE_WAY_KING_WEIGHT = 20.0;
 	private double BLACK_NEAR_KING_WEIGHT = 6.0;
 	private double WHITE_NEAR_KING_WEIGHT = 7.0;
+	
 	
 	
 	public AlgiseWhiteHeuristic (State state) {
