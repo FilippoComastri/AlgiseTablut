@@ -16,27 +16,42 @@ public class AlgiseWhiteHeuristic {
 	private List<String> escape;
 	private List<String> nearsThrone;
 	private String throne;
+	private double[][] pesi_posizioni_bianco=new double[][]{{2, 1, -1, 6, 6, 6, -1, 1, 2},
+													        {1,  4, 4,-3, 6,-3,  4, 4, 1},
+													        {-1, 4, 6, 4, 1, 4, 6, 4, -1},
+													        {6, -3, 4, 6,  0, 6, 4,-3,  6},
+													        {6,  6, 1, 0, 4, 0, 1, 6, 6},
+													        {6, -3,  4, 6, 0, 6, 4, -3, 6},
+													        {-1, 4, 6,  4, 1, 4, 6, 4, -1},
+													        {1, 4, 4, -3, 6, -3, 4, 4, 1},
+													        {2, 1, -1, 6, 6, 6, -1, 1, 2}};
 	
 	// Parametri da calcolare
 	private int pawnsB; // pedine NERE attuali
 	private int pawnsW; // pedine BIANCHE attuali
-	private int blackRisk; // pedine NERE a rischio cattura (una bianca, un accampamento o trono vicina) 
 	private int freeWayForKing; // vie libere per il RE
 	private Coordinate kingCoordinate;
 	private int blackNearKing; // pedine NERE vicine al RE
+	private double positions_sum;
+	
+	/*
+	 *Campi commentati per cambiamento euristica
+	private int blackRisk; // pedine NERE a rischio cattura (una bianca, un accampamento o trono vicina) 
 	private int whiteNearKing; // pedine BIANCHE vicine al RE
+	*/
+	
 	//TODO King at risk 
 	//TODO Valore alle posizioni
-	//TODO Vedere se il RE c'è oppure no
 	//TODO Provare HASH MAP per non ricalcolare euristica di stati
+	//TODO Usare le posizioni invece che per tutte le pedine solo per il RE e valutare la mossa usando anche i quadranti
 	
 	// PESI
-	private double REMAINING_BLACK_WEIGHT = 5.0;
-	private double REMAINING_WHITE_WEIGHT = 7.0;
+	private double REMAINING_BLACK_WEIGHT = 15.0;
+	private double REMAINING_WHITE_WEIGHT = 20.0;
 	private double BLACK_RISCK_WEIGHT = 8.0;
-	private double FREE_WAY_KING_WEIGHT = 20.0;
-	private double BLACK_NEAR_KING_WEIGHT = 6.0;
-	private double WHITE_NEAR_KING_WEIGHT = 7.0;
+	private double FREE_WAY_KING_WEIGHT = 50.0;
+	private double BLACK_NEAR_KING_WEIGHT = 8.0;
+	private double WHITE_NEAR_KING_WEIGHT = 7.0; 
 	
 	
 	
@@ -56,36 +71,40 @@ public class AlgiseWhiteHeuristic {
 
 	}
 	
+	private void resetValues() {
+		this.pawnsB=0; 
+		this.pawnsW=0; 
+		this.freeWayForKing=0; 
+		this.kingCoordinate=null;
+		this.blackNearKing=0; 
+		this.positions_sum=0;
+	}
+	
 	private void initializeFields() {
 		this.countPawns();
+		//TODO Se il re non c'è, allora posso già fermarmi qua senza andare oltre e restituire fallimento
 		this.countPawnsNearKing();
 		this.freeWay();
-		this.countBlackRisk();
+		//this.countBlackRisk();
 	}
 	
 	public double evaluateState() {
-		double result;
-		
+		double result=0;
+		this.resetValues();	
 		initializeFields();
-		/*private double REMAINING_BLACK_WEIGHT = 5.0;
-	private double REMAINING_WHITE_WEIGHT = 8.0;
-	private double BLACK_RISCK_WEIGHT = 7.0;
-	private double FREE_WAY_KING_WEIGHT = 20.0;
-	private double BLACK_NEAR_KING_WEIGHT = 6.0;
-	private double WHITE_NEAR_KING_WEIGHT = 9.0;*/
-		
-		/*
-		 * private int pawnsB; // pedine NERE attuali
-	private int pawnsW; // pedine BIANCHE attuali
-	private int blackRisk; // pedine NERE a rischio cattura (una bianca, un accampamento o trono vicina) 
-	private int freeWayForKing; // vie libere per il RE
-	private Coordinate kingCoordinate;
-	private int blackNearKing; // pedine NERE vicine al RE
-	private int whiteNearKing; // pedine BIANCHE vicine al RE
-		 */
-		result = pawnsB*REMAINING_BLACK_WEIGHT+pawnsW*REMAINING_WHITE_WEIGHT+blackRisk*BLACK_RISCK_WEIGHT+
-				freeWayForKing*FREE_WAY_KING_WEIGHT+blackNearKing*BLACK_NEAR_KING_WEIGHT+
-				whiteNearKing*WHITE_NEAR_KING_WEIGHT;
+		if(this.kingCoordinate==null)
+		{
+			return Double.MIN_VALUE;
+		}
+		else if (escape.contains(state.getBox(this.kingCoordinate.getX(), this.kingCoordinate.getY())))
+		{
+			return Double.MAX_VALUE;
+		}
+		result-= pawnsB*REMAINING_BLACK_WEIGHT;
+		result+=pawnsW*REMAINING_WHITE_WEIGHT;
+		result+=freeWayForKing*FREE_WAY_KING_WEIGHT;
+		result-=blackNearKing*BLACK_NEAR_KING_WEIGHT;
+		result+=this.positions_sum;
 		return result;
 	}
 	// TODO: UNIFICARE il tutto in un unico ciclo
@@ -97,6 +116,7 @@ public class AlgiseWhiteHeuristic {
 				//System.out.println("SOUT CountPawns "+state.getPawn(i, j));
 				if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
 					pawnsW++;
+					this.positions_sum+=this.pesi_posizioni_bianco[i][j];
 				}
 				else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
 					pawnsW++;
@@ -110,6 +130,7 @@ public class AlgiseWhiteHeuristic {
 	}
 	
 	// Calcolo pedine NERE a rischio cattura
+	/*
 	private void countBlackRisk() {
 		for (int i = 0; i < state.getBoard().length; i++) {
 			for (int j = 0; j < state.getBoard()[i].length; j++) {
@@ -121,6 +142,7 @@ public class AlgiseWhiteHeuristic {
 			}
 		}
 	}
+	*/
 	
 	private boolean whiteNearAttack(int row, int column, State state) {
 		if(row > 0 && state.getPawn(row-1,column).equalsPawn(State.Pawn.WHITE.toString()) && 
@@ -236,24 +258,25 @@ public class AlgiseWhiteHeuristic {
 	}
 	
 	// Calcolo pedine vicino al RE
+	
 	private void countPawnsNearKing () {
 		int x = kingCoordinate.getX();
 		int y = kingCoordinate.getY();
 		if(x > 0) {
 			if (this.state.getPawn(x-1, y).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
-			else if (this.state.getPawn(x-1, y).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
+			//else if (this.state.getPawn(x-1, y).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
 		}
 		if(x < state.getBoard().length-1) {
 			if (this.state.getPawn(x+1, y).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
-			else if (this.state.getPawn(x+1, y).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
+			//else if (this.state.getPawn(x+1, y).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
 		}
 		if(y > 0) {
 			if (this.state.getPawn(x, y-1).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
-			else if (this.state.getPawn(x, y-1).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
+			//else if (this.state.getPawn(x, y-1).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
 		}
 		if(y < state.getBoard().length-1) {
 			if (this.state.getPawn(x, y+1).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
-			else if (this.state.getPawn(x, y+1).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
+			//else if (this.state.getPawn(x, y+1).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
 		}
 	}
 	

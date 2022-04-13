@@ -22,10 +22,12 @@ public class AlgiseBlackHeuristic {
 	// Parametri da calcolare
 	private int pawnsB; // pedine NERE attuali
 	private int pawnsW; // pedine BIANCHE attuali
-	private int whiteToCapture; //pedine BIANCHE catturabili
-	private int blackWarning; //pedine NERE a rischio cattura
-	private int kingToCapture; //è possibile catturare il RE in una mossa?
+	private int kingToCapture; //è possibile catturare il RE in una mossa? oppure essere accerchiato
 	private int pesiQuadranti[] = new int[4];
+	/*
+	 * private int whiteToCapture; //pedine BIANCHE catturabili
+	 * private int blackWarning; //pedine NERE a rischio cattura
+	 */
 	
 	private double WHITE_WEIGHT = 1.0;
 	private double BLACK_WEIGHT = 1.0;
@@ -72,7 +74,7 @@ public class AlgiseBlackHeuristic {
 	private void initializeFields() {
 		this.countPawns();
 		this.countPawnsNearKing();
-		this.kingCapture();
+		this.setKingToCapture();
 		this.countWhiteToCapture();
 		this.setPesiQuadranti();
 	}
@@ -168,10 +170,99 @@ public class AlgiseBlackHeuristic {
 		
 	}
 	
-	private void kingCapture() {
+	/**
+	 * Controlla se il re inizia ad essere accerchiato
+	 */
+	private void setKingToCapture() {
+		if(this.kingCoordinate!=null)
+		{
+			String kingBox = this.state.getBox(this.kingCoordinate.getX(), this.kingCoordinate.getY());
+			//Re sul trono, è accerchiato su 3 lati
+			if(kingBox.equals(State.Pawn.THRONE))
+			{
 				
+			}
+			//Re vicino ad un accampamento
+			else if(this.campsNearAttack(this.kingCoordinate.getX(), this.kingCoordinate.getY(), this.state))
+			{
+				
+			}
+			//Re di fianco al castello accerchiato su 2 lati
+			/*
+			else if()
+			{
+				
+			}
+			*/
+		}
 	}
 	
+	/**
+	 * Questo metodo controlla se il re è vicino al trono ed è circondato da due lati da una pedina nemica e il 
+	 * terzo è libero.
+	 * Esempio: 	T
+	 * 			   BKB
+	 * 				O
+	 * 
+	 * oppure		T
+	 * 			   OKB
+	 * 				B
+	 * 
+	 * oppure		T
+	 * 			   BKO
+	 * 				B
+	 * Nota: questi 3 casi di accerchiamento sono ad esempio solo per il caso del Trono sopra al RE, ma vanno ripetuti
+	 * anche per le casitiche di RE sopra al trono(riga -1), a destra del trono e a sinistra del trono.
+	 * @param row
+	 * @param column
+	 * @param state
+	 * @return
+	 */
+	private boolean throneNearAttack(int row, int column, State state) {
+		if(row > 0 && state.getPawn(row-1,column).equalsPawn(State.Pawn.THRONE.toString()) && 
+				row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
+			return true;
+		if( row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.THRONE.toString()) && 
+				row > 0  && state.getPawn(row-1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
+			return true;
+		if(column > 0 && state.getPawn(row,column-1).equalsPawn(State.Pawn.THRONE.toString()) && 
+				column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.EMPTY.toString()) )
+			return true;
+		if( column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.THRONE.toString()) && 
+				column > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
+			return true;
+		
+		return false;
+	}
+	
+	/**
+	 * Questo metodo controlla se il re è vicino ad un accampamento e il lato opposto è libero. La situazione
+	 * può essere vantaggiosa per il nero
+	 * @param row
+	 * @param column
+	 * @param state
+	 * @return
+	 */
+	private boolean campsNearAttack(int row, int column, State state) {
+		boolean blackInCamp = camps.contains(state.getBox(row, column)); //TODO chiedere a filo
+		if (blackInCamp) return false;
+		else {
+			if(row > 0 && camps.contains(state.getBox(row-1, column)) && 
+					row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
+				return true;
+			if( row < state.getBoard().length-1 && camps.contains(state.getBox(row+1, column)) && 
+					row > 0  && state.getPawn(row-1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
+				return true;
+			if(column > 0 && camps.contains(state.getBox(row, column-1)) && 
+					column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.EMPTY.toString()) )
+				return true;
+			if( column < state.getBoard().length-1 && camps.contains(state.getBox(row, column+1)) && 
+					column > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
+				return true;
+						
+		}
+		return true;
+	}
 	
 	public AlgiseBlackHeuristic (State state) {
 		this.state = state;
@@ -190,8 +281,25 @@ public class AlgiseBlackHeuristic {
 	}
 
 	public double evaluateState() {
+		this.reset();
 		this.initializeFields();
-		return 0;
+		double result = 0;
+		if(kingCoordinate==null)
+		{
+			return Double.MAX_VALUE;
+		}
+		result+=this.pawnsB*this.REMAINING_BLACK_WEIGHT;
+		result-=this.pawnsW*this.REMAINING_WHITE_WEIGHT;
+		return result;
+	}
+
+	private void reset() {
+		this.kingCoordinate=null;
+		this.pawnsB=0;
+		this.pawnsW=0;
+		this.blackNearKing=0;
+		//this.blackWarning=0;
+		this.kingToCapture=0;
 	}
 
 }
