@@ -21,6 +21,7 @@ public class Action implements Serializable {
 
 	public Action(String from, String to, StateTablut.Turn t) throws IOException {
 		if (from.length() != 2 || to.length() != 2) {
+			System.out.println("SOUT: Action: from="+from+" to="+to);
 			throw new InvalidParameterException("the FROM and the TO string must have length=2");
 		} else {
 			this.from = from;

@@ -51,8 +51,17 @@ public class AlgiseWhiteHeuristic {
 
 	}
 	
+	private void initializeFields() {
+		this.countPawns();
+		this.countPawnsNearKing();
+		this.freeWay();
+		this.countBlackRisk();
+	}
+	
 	public double evaluateState() {
 		double result;
+		
+		initializeFields();
 		/*private double REMAINING_BLACK_WEIGHT = 5.0;
 	private double REMAINING_WHITE_WEIGHT = 8.0;
 	private double BLACK_RISCK_WEIGHT = 7.0;
@@ -80,13 +89,13 @@ public class AlgiseWhiteHeuristic {
 	private void countPawns() {
 		for (int i = 0; i < state.getBoard().length; i++) {
 			for (int j = 0; j <state.getBoard()[i].length; j++) {
+				System.out.println("SOUT CountPawns "+state.getPawn(i, j));
 				if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
 					pawnsW++;
 				}
 				else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
 					pawnsW++;
 					kingCoordinate = new Coordinate(i,j);
-					
 				}
 				else if (state.getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString())) {
 					pawnsB++;
