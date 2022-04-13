@@ -28,11 +28,11 @@ public class AlgiseWhiteHeuristic {
 	
 	// PESI
 	private double REMAINING_BLACK_WEIGHT = 5.0;
-	private double REMAINING_WHITE_WEIGHT = 8.0;
-	private double BLACK_RISCK_WEIGHT = 7.0;
+	private double REMAINING_WHITE_WEIGHT = 7.0;
+	private double BLACK_RISCK_WEIGHT = 8.0;
 	private double FREE_WAY_KING_WEIGHT = 20.0;
 	private double BLACK_NEAR_KING_WEIGHT = 6.0;
-	private double WHITE_NEAR_KING_WEIGHT = 9.0;
+	private double WHITE_NEAR_KING_WEIGHT = 7.0;
 	
 	
 	public AlgiseWhiteHeuristic (State state) {
@@ -78,7 +78,7 @@ public class AlgiseWhiteHeuristic {
 	private int blackNearKing; // pedine NERE vicine al RE
 	private int whiteNearKing; // pedine BIANCHE vicine al RE
 		 */
-		result = pawnsB*BLACK_NEAR_KING_WEIGHT+pawnsW*REMAINING_WHITE_WEIGHT+blackRisk*BLACK_RISCK_WEIGHT+
+		result = pawnsB*REMAINING_BLACK_WEIGHT+pawnsW*REMAINING_WHITE_WEIGHT+blackRisk*BLACK_RISCK_WEIGHT+
 				freeWayForKing*FREE_WAY_KING_WEIGHT+blackNearKing*BLACK_NEAR_KING_WEIGHT+
 				whiteNearKing*WHITE_NEAR_KING_WEIGHT;
 		return result;
@@ -89,7 +89,7 @@ public class AlgiseWhiteHeuristic {
 	private void countPawns() {
 		for (int i = 0; i < state.getBoard().length; i++) {
 			for (int j = 0; j <state.getBoard()[i].length; j++) {
-				System.out.println("SOUT CountPawns "+state.getPawn(i, j));
+				//System.out.println("SOUT CountPawns "+state.getPawn(i, j));
 				if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
 					pawnsW++;
 				}
@@ -128,7 +128,7 @@ public class AlgiseWhiteHeuristic {
 				column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.EMPTY.toString()) )
 			return true;
 		if( column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.WHITE.toString()) && 
-				row > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
+				column > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
 			return true;
 		
 		return false;
@@ -146,7 +146,7 @@ public class AlgiseWhiteHeuristic {
 				column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.EMPTY.toString()) )
 			return true;
 		if( column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.THRONE.toString()) && 
-				row > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
+				column > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
 			return true;
 		
 		return false;
@@ -166,7 +166,7 @@ public class AlgiseWhiteHeuristic {
 					column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.EMPTY.toString()) )
 				return true;
 			if( column < state.getBoard().length-1 && camps.contains(state.getBox(row, column+1)) && 
-					row > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
+					column > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
 				return true;
 						
 		}

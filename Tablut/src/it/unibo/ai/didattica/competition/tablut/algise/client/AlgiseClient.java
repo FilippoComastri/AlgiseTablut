@@ -23,7 +23,7 @@ public class AlgiseClient extends TablutClient {
 		//DEFAULT DI PROVA
 		
 		String player = "WHITE" ;
-		int timeout = 60;
+		int timeout = 10;
 		String ipServer = "localhost";
 
 		AlgiseClient client = new AlgiseClient(player,name,timeout,ipServer);
