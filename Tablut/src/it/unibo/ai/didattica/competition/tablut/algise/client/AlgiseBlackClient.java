@@ -13,7 +13,7 @@ public class AlgiseBlackClient {
 			/*
 			 * Invocazione senza argomenti, setto i parametri di default per giocare in locale
 			 */
-			System.out.println("0 argomenti");
+			System.out.println("Invocazione senza argomenti, settaggio a default");
 			array = new String[]{"BLACK", "15", "localhost"};
 		}
 		else if(args.length==1)
@@ -21,7 +21,7 @@ public class AlgiseBlackClient {
 			/*
 			 * Uso un solo argomento, che in questo caso è il timeout. Gli altri 2 sono lasciati a default
 			 */
-			System.out.println("1 argomenti");
+			System.out.println("Invocazione ad un argomento, ricevuto timeout");
 			array = new String[]{"BLACK", args[0], "localhost"};
 		}
 		else if(args.length==2)
@@ -29,7 +29,7 @@ public class AlgiseBlackClient {
 			/*
 			 * Invocazione con 2 argomenti: timeout e ip server
 			 */
-			System.out.println("2 argomenti");
+			System.out.println("Invocazione ad un argomento, ricevuto timeout ed ip server");
 			array = new String[]{"BLACK", args[0], args[1]};
 		}
 		else

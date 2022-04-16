@@ -49,9 +49,16 @@ public class AlgiseClient extends TablutClient {
 		// Il bianco deve fare la prima mossa
 		State state = new StateTablut();
 		state.setTurn(State.Turn.WHITE);
-
+		GameAshtonTablut gameRules = null;
 		// Impostiamo le regole del gioco
-		GameAshtonTablut gameRules = new GameAshtonTablut(99, 0, "logs", "fake", "fake");
+		if(this.getPlayer().equals(State.Turn.WHITE))
+		{
+			gameRules = new GameAshtonTablut(99, 0, "logs", this.getName(), "blackOpponent");
+		}
+		else
+		{
+			gameRules = new GameAshtonTablut(99, 0, "logs", "whiteOpponent", this.getName());
+		}
 
 		while (true) {
 
