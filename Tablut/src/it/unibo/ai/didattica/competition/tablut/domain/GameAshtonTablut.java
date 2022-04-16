@@ -328,6 +328,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		return state;
 	}
 	
+	
 	private boolean checkMoveBoolean(State _state, Action a) {
 		/* controllo la mossa
 		if (a.getTo().length() != 2 || a.getFrom().length() != 2) {
@@ -907,12 +908,11 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		for (int i = 0 ; i<state.getBoard().length ; i++) {
 			for (int j = 0 ; j<state.getBoard()[0].length; j++) {
 				if (state.getPawn(i, j).equalsPawn(currentTurn.toString()) 
-						|| (currentTurn.equals(Turn.WHITE) && state.getPawn(j, i).equalsPawn(Pawn.KING.toString()))) {
+						|| (currentTurn.equals(Turn.WHITE) && state.getPawn(i, j).equalsPawn(Pawn.KING.toString()))) {
 					actions.addAll(getActionsPawn(i,j,state));
 				}
 			}
 		}
-		
 		return actions;
 	}
 	
@@ -939,17 +939,13 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			boolean ok = checkMoveBoolean(state, nextAction);
-			if(ok)
+			fine = !checkMoveBoolean(state, nextAction);
+			if(fine==false)
 			{
-				//System.out.println("getActionsUp Aggiungo la mossa "+nextAction);
+				//System.out.println("getActionsDown Aggiungo la mossa "+nextAction);
 				actions.add(nextAction);
 			}
-			else
-			{
-				//System.out.println("getActionsUp NON aggiungo la mossa "+ nextAction);
-				fine=true;
-			}
+
 				
 		}
 		//System.out.println("SOUT getActionsUp ("+row + " "+column+"): "+actions.size());
@@ -976,10 +972,6 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 				//System.out.println("getActionsDown Aggiungo la mossa "+nextAction);
 				actions.add(nextAction);
 			}
-			else
-			{
-				//System.out.println("getActionsDown NON aggiungo la mossa "+ nextAction);
-			}
 		}
 		//System.out.println("SOUT getActionsDown: ("+row + " "+column+"): "+actions.size());
 		return actions ;
@@ -1002,12 +994,8 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 			fine = !checkMoveBoolean(state, nextAction);
 			if(fine==false)
 			{
-				//System.out.println("getActionsRight Aggiungo la mossa "+nextAction);
+				//System.out.println("getActionsDown Aggiungo la mossa "+nextAction);
 				actions.add(nextAction);
-			}
-			else
-			{
-				//System.out.println("getActionsRight NON aggiungo la mossa "+ nextAction);
 			}
 		}
 		//System.out.println("SOUT getActionsRight: ("+row + " "+column+"): "+actions.size());
@@ -1028,12 +1016,8 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 			fine = !checkMoveBoolean(state, nextAction);
 			if(fine==false)
 			{
-				//System.out.println("getActionsLeft Aggiungo la mossa "+nextAction);
+				//System.out.println("getActionsDown Aggiungo la mossa "+nextAction);
 				actions.add(nextAction);
-			}
-			else
-			{
-				//System.out.println("getActionsLeft NON aggiungo la mossa "+ nextAction);
 			}
 		}
 		//System.out.println("SOUT getActionsLeft: ("+row + " "+column+"): "+actions.size());

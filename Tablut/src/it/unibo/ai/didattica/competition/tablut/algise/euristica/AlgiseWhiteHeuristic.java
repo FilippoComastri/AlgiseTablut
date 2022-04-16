@@ -111,7 +111,7 @@ public class AlgiseWhiteHeuristic {
 				result+=freeWayForKing*FREE_WAY_KING_WEIGHT;
 				result-=blackNearKing*BLACK_NEAR_KING_WEIGHT;
 				result+=this.positions_sum;
-				return result;
+				return -result;
 			}
 
 			private void resetFields() {
@@ -133,7 +133,7 @@ public class AlgiseWhiteHeuristic {
 						// CALCOLO PEDINE SULLA BOARD e LORO PESO
 						if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
 							pawnsW++;
-							this.positions_sum+=this.pesi_posizioni_bianco[i][j];
+							//this.positions_sum+=this.pesi_posizioni_bianco[i][j];
 						}
 						else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
 							pawnsW++;
@@ -146,7 +146,7 @@ public class AlgiseWhiteHeuristic {
 
 
 					} // for j
-				}
+				} // for i
 
 				// STATISTICHE RE
 				// Se non c'è il re => HO PERSO (termino)

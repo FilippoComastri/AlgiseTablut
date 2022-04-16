@@ -28,7 +28,7 @@ public class AlgiseClient extends TablutClient {
 			String player = args[0] ;
 			int timeout = Integer.parseInt(args[1]);
 			String ipServer = args[2];
-
+			System.out.println(timeout);
 			AlgiseClient client = new AlgiseClient(player,name,timeout,ipServer);
 			client.run();
 		}
