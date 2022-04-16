@@ -18,6 +18,7 @@ public class AlgiseBlackHeuristic {
 	private Coordinate kingCoordinate;
 	private int blackNearKing; // pedine NERE vicine al RE
 	private int whiteNearKing; // pedine BIANCHE vicine al RE
+	private int freeWayForKing;
 
 	// Parametri da calcolare
 	private int pawnsB; // pedine NERE attuali
@@ -63,18 +64,174 @@ public class AlgiseBlackHeuristic {
 	//Pesi
 	private double BLACK_WEIGHT = 5.0;
 	private double WHITE_WEIGHT = 7.0;
+	private double FREE_WAY_FOR_KING = 15.0;
 	//private double WHITE_TO_CAPTURE_WEIGHT = 10.0;
 	//private double BLACK_WARNING_WEIGHT = 8.0;
 	//private double KING_TO_CAPTURE = 100.0;
 
+	private static int LOOSE = -1;
+	private static int WIN = 1;
+	
+	public AlgiseBlackHeuristic (State state) {
+		this.state = state;
+		this.initB = 16;
+		this.initW = 9; // 8 + KING
 
-	private void extractFields() {
-		this.countPawns();
-		this.countPawnsNearKing();
-		//this.setKingToCapture();
-		//this.countWhiteToCapture();
-		//this.setPesiQuadranti();
+		this.camps = Arrays.asList("a4", "a5", "a6", "b5", "d1", "e1", "f1", "e2", "i4", "i5", "i6", "h5", "d9",
+				"e9", "f9", "e8");
+
+		this.escape = Arrays.asList("a2", "a3", "a7", "a8", "b1", "b9", "c1", "c9", "g1", "g9", "h1", "h9", "i2", "i3",
+				"i7", "i8");
+
+		this.nearsThrone = Arrays.asList("e4", "e6", "d5", "f5");
+		this.throne = "e5";
+
 	}
+
+	public double evaluateState() {
+
+		//Resetto
+		resetFields();
+
+		//Calcolo dei vari parametri
+		int state = extractFields();
+		
+		if (state == LOOSE) {
+			return Double.MIN_VALUE;
+		}
+		else if (state == WIN){
+			return Double.MAX_VALUE;
+		}
+
+		double result = 0;
+		//Se kingCoordinate==null significa che il re è stato mangiato, quindi quella mossa ha priorita massima 
+		
+		result+=this.pawnsB*this.BLACK_WEIGHT;
+		result-=this.pawnsW*this.WHITE_WEIGHT;
+		result+=this.blackNearKing*this.BLACK_WEIGHT;
+		result-=this.freeWayForKing*this.FREE_WAY_FOR_KING;
+
+		return result;
+	}
+
+	private void resetFields() {
+		this.kingCoordinate=null;
+		this.pawnsB=0;
+		this.pawnsW=0;
+		this.blackNearKing=0;
+		this.freeWayForKing = 0;
+		//this.blackWarning=0;
+		//this.kingToCapture=0;
+	}
+	
+	private int extractFields() {
+		
+		for (int i = 0; i < state.getBoard().length; i++) {
+			for (int j = 0; j <state.getBoard()[i].length; j++) {
+				
+				// CALCOLO PEDINE NELLA BOARD
+				if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
+					pawnsW++;
+				}
+				else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
+					pawnsW++;
+					kingCoordinate = new Coordinate(i,j);
+				}
+				else if (state.getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString())) {
+					pawnsB++;
+				}
+			} // for j
+		} // for i
+		
+		// STATISTICHE RE
+		if(kingCoordinate==null)
+		{
+			return WIN;
+		}
+		else if (escape.contains(state.getBox(this.kingCoordinate.getX(), this.kingCoordinate.getY()))) {
+			return LOOSE;
+		}
+
+		
+		int x = kingCoordinate.getX();
+		int y = kingCoordinate.getY();
+		
+		
+		
+		// PEDINE NERE E BIANCHE VICINE AL RE
+		if(x > 0) {
+			if (this.state.getPawn(x-1, y).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
+			else if (this.state.getPawn(x-1, y).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
+		}
+		if(x < state.getBoard().length-1) {
+			if (this.state.getPawn(x+1, y).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
+			else if (this.state.getPawn(x+1, y).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
+		}
+		if(y > 0) {
+			if (this.state.getPawn(x, y-1).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
+			else if (this.state.getPawn(x, y-1).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
+		}
+		if(y < state.getBoard().length-1) {
+			if (this.state.getPawn(x, y+1).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
+			else if (this.state.getPawn(x, y+1).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
+		}
+		
+		// VIE LIBERE PER IL RE
+		if(x < 3 || x > 5) {
+			if(checkLeft(x,y)) freeWayForKing++;
+			if(checkRight(x,y)) freeWayForKing++;
+		}
+
+		if(y < 3 || y > 5) {
+			if(checkUp(x,y)) freeWayForKing++;
+			if(checkDown(x,y)) freeWayForKing++;
+		}
+
+		return 0;
+	}
+	
+	
+	private boolean checkLeft(int row,int column) {
+		for( int i=row; i>= 0; i--) {
+			if(this.state.getPawn(i, column).equalsPawn(State.Pawn.BLACK.toString()) ||
+					this.state.getPawn(i, column).equalsPawn(State.Pawn.WHITE.toString()) ||
+					camps.contains(state.getBox(i, column)))
+				return false;
+		}
+		return true;
+	}
+
+	private boolean checkRight(int row,int column) {
+		for( int i=row; i< 9; i++) {
+			if(this.state.getPawn(i, column).equalsPawn(State.Pawn.BLACK.toString()) ||
+					this.state.getPawn(i, column).equalsPawn(State.Pawn.WHITE.toString()) ||
+					camps.contains(state.getBox(i, column)))
+				return false;
+		}
+		return true;
+	}
+
+	private boolean checkUp(int row,int column) {
+		for( int i=column; i>= 0; i--) {
+			if(this.state.getPawn(row, i).equalsPawn(State.Pawn.BLACK.toString()) ||
+					this.state.getPawn(row, i).equalsPawn(State.Pawn.WHITE.toString()) ||
+					camps.contains(state.getBox(row, i)))
+				return false;
+		}
+		return true;
+	}
+
+	private boolean checkDown(int row,int column) {
+		for( int i=column; i < 9; i++) {
+			if(this.state.getPawn(row, i).equalsPawn(State.Pawn.BLACK.toString()) ||
+					this.state.getPawn(row, i).equalsPawn(State.Pawn.WHITE.toString()) ||
+					camps.contains(state.getBox(row, i)))
+				return false;
+		}
+		return true;
+	}
+
+
 
 	//TODO metodo che assegna un peso maggiore in base alla distanza delle pedine dal re
 
@@ -128,45 +285,7 @@ public class AlgiseBlackHeuristic {
 
 
 
-	private void countPawns() {
-		for (int i = 0; i < state.getBoard().length; i++) {
-			for (int j = 0; j <state.getBoard()[i].length; j++) {
-				//System.out.println("SOUT CountPawns "+state.getPawn(i, j));
-				if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
-					pawnsW++;
-				}
-				else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
-					pawnsW++;
-					kingCoordinate = new Coordinate(i,j);
-				}
-				else if (state.getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString())) {
-					pawnsB++;
-				}
-			}
-		}
-	}
-
-	// Calcolo pedine vicino al RE
-	private void countPawnsNearKing () {
-		int x = kingCoordinate.getX();
-		int y = kingCoordinate.getY();
-		if(x > 0) {
-			if (this.state.getPawn(x-1, y).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
-			else if (this.state.getPawn(x-1, y).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
-		}
-		if(x < state.getBoard().length-1) {
-			if (this.state.getPawn(x+1, y).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
-			else if (this.state.getPawn(x+1, y).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
-		}
-		if(y > 0) {
-			if (this.state.getPawn(x, y-1).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
-			else if (this.state.getPawn(x, y-1).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
-		}
-		if(y < state.getBoard().length-1) {
-			if (this.state.getPawn(x, y+1).equalsPawn(State.Pawn.BLACK.toString())) blackNearKing++;
-			else if (this.state.getPawn(x, y+1).equalsPawn(State.Pawn.WHITE.toString())) whiteNearKing++;
-		}
-	}
+	
 
 
 	//	/*private void countWhiteToCapture () {
@@ -267,51 +386,9 @@ public class AlgiseBlackHeuristic {
 	//		return true;
 	//	}
 
-	public AlgiseBlackHeuristic (State state) {
-		this.state = state;
-		this.initB = 16;
-		this.initW = 9; // 8 + KING
 
-		this.camps = Arrays.asList("a4", "a5", "a6", "b5", "d1", "e1", "f1", "e2", "i4", "i5", "i6", "h5", "d9",
-				"e9", "f9", "e8");
 
-		this.escape = Arrays.asList("a2", "a3", "a7", "a8", "b1", "b9", "c1", "c9", "g1", "g9", "h1", "h9", "i2", "i3",
-				"i7", "i8");
-
-		this.nearsThrone = Arrays.asList("e4", "e6", "d5", "f5");
-		this.throne = "e5";
-
+		
+		
 	}
 
-	public double evaluateState() {
-
-		//Resetto
-		this.reset();
-
-		//Calcolo dei vari parametri
-		this.extractFields();
-
-		double result = 0;
-		//Se kingCoordinate==null significa che il re è stato mangiato, quindi quella mossa ha priorita massima 
-		if(kingCoordinate==null)
-		{
-			return Double.MAX_VALUE;
-		}
-
-		result+=this.pawnsB*this.BLACK_WEIGHT;
-		result-=this.pawnsW*this.WHITE_WEIGHT;
-		result+=this.blackNearKing*this.BLACK_WEIGHT;
-
-		return result;
-	}
-
-	private void reset() {
-		this.kingCoordinate=null;
-		this.pawnsB=0;
-		this.pawnsW=0;
-		this.blackNearKing=0;
-		//this.blackWarning=0;
-		//this.kingToCapture=0;
-	}
-
-}

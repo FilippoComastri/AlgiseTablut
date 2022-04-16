@@ -100,18 +100,20 @@ public class AlgiseWhiteHeuristic {
 				// se non c'è il re ho perso
 				if(state == LOOSE)
 				{
+					
 					return Double.MIN_VALUE;
 				}// se il re è in escape ho vinto
 				else if (state == WIN)
 				{
+					
 					return Double.MAX_VALUE;
 				}
 				result-= pawnsB*REMAINING_BLACK_WEIGHT;
-				result+=pawnsW*REMAINING_WHITE_WEIGHT;
-				result+=freeWayForKing*FREE_WAY_KING_WEIGHT;
-				result-=blackNearKing*BLACK_NEAR_KING_WEIGHT;
-				result+=this.positions_sum;
-				return -result;
+				result+= pawnsW*REMAINING_WHITE_WEIGHT;
+				result+= freeWayForKing*FREE_WAY_KING_WEIGHT;
+				result-= blackNearKing*BLACK_NEAR_KING_WEIGHT;
+				result+= this.positions_sum;
+				return result;
 			}
 
 			private void resetFields() {
@@ -133,7 +135,7 @@ public class AlgiseWhiteHeuristic {
 						// CALCOLO PEDINE SULLA BOARD e LORO PESO
 						if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
 							pawnsW++;
-							//this.positions_sum+=this.pesi_posizioni_bianco[i][j];
+							this.positions_sum+=this.pesi_posizioni_bianco[i][j];
 						}
 						else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
 							pawnsW++;
@@ -204,7 +206,7 @@ public class AlgiseWhiteHeuristic {
 			}
 
 			private boolean checkRight(int row,int column) {
-				for( int i=row; i<=8; i++) {
+				for( int i=row; i< 9; i++) {
 					if(this.state.getPawn(i, column).equalsPawn(State.Pawn.BLACK.toString()) ||
 							this.state.getPawn(i, column).equalsPawn(State.Pawn.WHITE.toString()) ||
 							camps.contains(state.getBox(i, column)))
@@ -224,7 +226,7 @@ public class AlgiseWhiteHeuristic {
 			}
 
 			private boolean checkDown(int row,int column) {
-				for( int i=column; i <= 9; i++) {
+				for( int i=column; i < 9; i++) {
 					if(this.state.getPawn(row, i).equalsPawn(State.Pawn.BLACK.toString()) ||
 							this.state.getPawn(row, i).equalsPawn(State.Pawn.WHITE.toString()) ||
 							camps.contains(state.getBox(row, i)))
