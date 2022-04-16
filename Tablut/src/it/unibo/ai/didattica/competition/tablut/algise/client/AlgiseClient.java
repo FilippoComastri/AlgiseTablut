@@ -20,17 +20,6 @@ public class AlgiseClient extends TablutClient {
 
 	public static void main(String[] args) throws IOException {
 		String name = "Algise" ; 
-		//DEFAULT DI PROVA
-		/*
-		String player = "WHITE" ;
-		int timeout = 10;
-		String ipServer = "localhost";
-
-		AlgiseClient client = new AlgiseClient(player,name,timeout,ipServer);
-		client.run();
-		
-		*/
-		//System.out.println(args[0]);
 		if (args.length != 3) {
 			System.out.println("ALGISE dice : NO! Moc sa fet!! Brisa fer l'esen!! Gnurant!!");
 			System.out.println("USAGE: Il pistolotto dev'essere invocato ./runmyplayer.sh <WHITE|BLACK> <timeout> <ip_server>");
