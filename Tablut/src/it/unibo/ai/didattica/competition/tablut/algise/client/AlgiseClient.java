@@ -45,7 +45,10 @@ public class AlgiseClient extends TablutClient {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
+		//Algise saluta
+		this.salutaAlgise();
+		
 		// Il bianco deve fare la prima mossa
 		State state = new StateTablut();
 		state.setTurn(State.Turn.WHITE);
@@ -165,6 +168,24 @@ public class AlgiseClient extends TablutClient {
 			}
 		}
 
+	}
+	
+	/**
+	 * Print some greeting
+	 */
+	public void salutaAlgise() {
+		System.out.println("\r\n"
+				+ " ________  ___       ________  ___  ________  _______      \r\n"
+				+ "|\\   __  \\|\\  \\     |\\   ____\\|\\  \\|\\   ____\\|\\  ___ \\     \r\n"
+				+ "\\ \\  \\|\\  \\ \\  \\    \\ \\  \\___|\\ \\  \\ \\  \\___|\\ \\   __/|    \r\n"
+				+ " \\ \\   __  \\ \\  \\    \\ \\  \\  __\\ \\  \\ \\_____  \\ \\  \\_|/__  \r\n"
+				+ "  \\ \\  \\ \\  \\ \\  \\____\\ \\  \\|\\  \\ \\  \\|____|\\  \\ \\  \\_|\\ \\ \r\n"
+				+ "   \\ \\__\\ \\__\\ \\_______\\ \\_______\\ \\__\\____\\_\\  \\ \\_______\\\r\n"
+				+ "    \\|__|\\|__|\\|_______|\\|_______|\\|__|\\_________\\|_______|\r\n"
+				+ "                                      \\|_________|         \r\n"
+				+ "                                                           \r\n"
+				+ "                                                           \r\n"
+				+ "");
 	}
 
 	private Action findBestMove(GameAshtonTablut gameRules, State state) {
