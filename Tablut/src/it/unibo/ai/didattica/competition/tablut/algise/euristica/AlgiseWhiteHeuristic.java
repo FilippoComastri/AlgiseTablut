@@ -59,10 +59,10 @@ public class AlgiseWhiteHeuristic {
 			//TODO Usare le posizioni invece che per tutte le pedine solo per il RE e valutare la mossa usando anche i quadranti
 
 			// PESI
-			private double REMAINING_BLACK_WEIGHT = 20.0;
-			private double REMAINING_WHITE_WEIGHT = 25.0;
+			private double REMAINING_BLACK_WEIGHT = 10.0;
+			private double REMAINING_WHITE_WEIGHT = 22.0;
 			private double FREE_WAY_KING_WEIGHT = 50.0;
-			private double BLACK_NEAR_KING_WEIGHT = 8.0;
+			private double BLACK_NEAR_KING_WEIGHT = 6.0;
 			/*
 			private double BLACK_RISCK_WEIGHT = 8.0;
 			private double WHITE_NEAR_KING_WEIGHT = 7.0; */

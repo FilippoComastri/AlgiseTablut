@@ -62,8 +62,8 @@ public class AlgiseBlackHeuristic {
 	//	private int END_COL_QUAD_4=8;
 
 	//Pesi
-	private double BLACK_WEIGHT = 5.0;
-	private double WHITE_WEIGHT = 7.0;
+	private double BLACK_WEIGHT = 6.0;
+	private double WHITE_WEIGHT = 8.0;
 	private double FREE_WAY_FOR_KING = 15.0;
 	//private double WHITE_TO_CAPTURE_WEIGHT = 10.0;
 	//private double BLACK_WARNING_WEIGHT = 8.0;
