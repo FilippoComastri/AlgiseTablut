@@ -60,6 +60,8 @@ public class AlgiseBlackHeuristic {
 	//	private int END_ROW_QUAD_4=8;
 	//	private int START_COL_QUAD_4=5;
 	//	private int END_COL_QUAD_4=8;
+	
+	//TODO Neri vicino al re
 
 	//Pesi
 	private double BLACK_WEIGHT = 6.0;
