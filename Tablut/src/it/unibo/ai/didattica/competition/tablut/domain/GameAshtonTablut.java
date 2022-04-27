@@ -591,7 +591,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		return state;
 	}
 
-	private State checkCaptureBlackKingRight(State state, Action a) {
+	private State checkCaptureBlackRKingight(State state, Action a) {
 		// ho il re sulla destra
 		if (a.getColumnTo() < state.getBoard().length - 2
 				&& (state.getPawn(a.getRowTo(), a.getColumnTo() + 1).equalsPawn("K"))) {
@@ -823,7 +823,7 @@ public class GameAshtonTablut implements Game,aima.core.search.adversarial.Game<
 		this.checkCaptureBlackPawnLeft(state, a);
 		this.checkCaptureBlackPawnUp(state, a);
 		this.checkCaptureBlackPawnDown(state, a);
-		this.checkCaptureBlackKingRight(state, a);
+		this.checkCaptureBlackRKingight(state, a);
 		this.checkCaptureBlackKingLeft(state, a);
 		this.checkCaptureBlackKingDown(state, a);
 		this.checkCaptureBlackKingUp(state, a);

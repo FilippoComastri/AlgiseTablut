@@ -5,13 +5,12 @@ import java.util.List;
 
 import it.unibo.ai.didattica.competition.tablut.algise.domain.Coordinate;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 
 public class AlgiseWhiteHeuristic {
 
 	// Parametri iniziali
 	private State state;
-	private int initB; // pedine NERE iniziali
-	private int initW; // pedine BIANCHE iniziali
 	private List<String> camps;
 	private List<String> escape;
 	private List<String> nearsThrone;
@@ -46,11 +45,12 @@ public class AlgiseWhiteHeuristic {
 			private Coordinate kingCoordinate;
 			private int blackNearKing; // pedine NERE vicine al RE
 			private double positions_sum; // pesi delle posizioni dei bianchi
+			private double CRStartegicheFree;
 
-			/*
-			 *Campi commentati per cambiamento euristica
-	private int blackRisk; // pedine NERE a rischio cattura (una bianca, un accampamento o trono vicina) 
-	private int whiteNearKing; // pedine BIANCHE vicine al RE
+			
+			 /*
+			private int blackRisk; // pedine NERE a rischio cattura (una bianca, un accampamento o trono vicina) 
+			private int whiteNearKing; // pedine BIANCHE vicine al RE
 			 */
 
 			//TODO King at risk 
@@ -63,6 +63,9 @@ public class AlgiseWhiteHeuristic {
 			private double REMAINING_WHITE_WEIGHT = 22.0;
 			private double FREE_WAY_KING_WEIGHT = 50.0;
 			private double BLACK_NEAR_KING_WEIGHT = 6.0;
+			private double POSITION_WEIGHT = 0.5;
+			private double KING_POSITION_WEIGHT = 2;
+			
 			/*
 			private double BLACK_RISCK_WEIGHT = 8.0;
 			private double WHITE_NEAR_KING_WEIGHT = 7.0; */
@@ -76,8 +79,6 @@ public class AlgiseWhiteHeuristic {
 
 			public AlgiseWhiteHeuristic (State state) {
 				this.state = state;
-				this.initB = 16;
-				this.initW = 9; // 8 + KING
 
 				this.camps = Arrays.asList("a4", "a5", "a6", "b5", "d1", "e1", "f1", "e2", "i4", "i5", "i6", "h5", "d9",
 						"e9", "f9", "e8");
@@ -112,7 +113,9 @@ public class AlgiseWhiteHeuristic {
 				result+= pawnsW*REMAINING_WHITE_WEIGHT;
 				result+= freeWayForKing*FREE_WAY_KING_WEIGHT;
 				result-= blackNearKing*BLACK_NEAR_KING_WEIGHT;
-				result+= this.positions_sum;
+				result+= this.positions_sum*POSITION_WEIGHT;
+				result+=CRStartegicheFree;
+
 				return result;
 			}
 
@@ -123,6 +126,7 @@ public class AlgiseWhiteHeuristic {
 				this.kingCoordinate=null;
 				this.blackNearKing=0; 
 				this.positions_sum=0;
+				this.CRStartegicheFree = 0;
 			}
 
 
@@ -140,7 +144,7 @@ public class AlgiseWhiteHeuristic {
 						else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
 							pawnsW++;
 							kingCoordinate = new Coordinate(i,j);
-							this.positions_sum+=this.pesi_posizione_re[i][j];
+							this.positions_sum+=this.pesi_posizione_re[i][j]*KING_POSITION_WEIGHT;
 						}
 						else if (state.getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString())) {
 							pawnsB++;
@@ -190,6 +194,9 @@ public class AlgiseWhiteHeuristic {
 					if(checkUp(x,y)) freeWayForKing++;
 					if(checkDown(x,y)) freeWayForKing++;
 				}
+				
+				// Colonne e righe strategiche libere
+				CRStartegicheFree = righeColonneStrategicheLibere(state);
 
 				return 0;
 			}
@@ -234,6 +241,47 @@ public class AlgiseWhiteHeuristic {
 				}
 				return true;
 			}
+			
+			
+			private double righeColonneStrategicheLibere(State s) {
+				double soloNere = 0;
+				//double soloBianche = 0;
+				double vuote = 0;
+				double soloRe = 0;
+				int RBlack, RWhite, CBlack, CWhite;
+				boolean RKing, CKing;
+				int[] CRStrategiche = {2,6};
+				
+				for (Integer i : CRStrategiche) {
+					RBlack=0; // pedine NERE nella riga
+					RWhite=0; // pedine BIANCHE nella riga
+					CBlack=0; // pedine NERE nella colonna
+					CWhite=0; // pedine BIANCHE nella colonna
+					RKing=false; // RE nella riga
+					CKing=false; // RE nella colonna
+					
+					for(int j=0; j<state.getBoard().length;j++) {
+						if(s.getPawn(i, j).equals(Pawn.BLACK)) RBlack++;
+						if(s.getPawn(i, j).equals(Pawn.WHITE)) RWhite++;
+						if(s.getPawn(i, j).equals(Pawn.KING)) RKing=true;
+						if(s.getPawn(j, i).equals(Pawn.BLACK)) CBlack++;
+						if(s.getPawn(j, i).equals(Pawn.WHITE)) CWhite++;
+						if(s.getPawn(j, i).equals(Pawn.KING)) CKing=true;
+					}
+					
+					if(RBlack==0 && RWhite==0 && !RKing) vuote++;
+					if(CBlack==0 && CWhite==0 && !CKing) vuote++;
+					if(RBlack>=1 && RWhite==0 && !RKing) soloNere++;
+					//if(RBlack==0 && RWhite>=1 && !RKing) soloBianche++;
+					if(RBlack==0 && RWhite==0 && RKing) soloRe=10;
+					if(CBlack>=1 && CWhite==0 && !CKing) soloNere++;
+					//if(CBlack==0 && CWhite>=1 && !CKing) soloBianche++;
+					if(CBlack==0 && CWhite==0 && CKing) soloRe=10;
+				}
+				
+				return soloRe + vuote*3 - soloNere*0.5;
+			}
+
 
 
 			// Calcolo pedine NERE a rischio cattura
@@ -251,7 +299,7 @@ public class AlgiseWhiteHeuristic {
 	}
 			 */
 
-			private boolean whiteNearAttack(int row, int column, State state) {
+			/*private boolean whiteNearAttack(int row, int column, State state) {
 				if(row > 0 && state.getPawn(row-1,column).equalsPawn(State.Pawn.WHITE.toString()) && 
 						row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
 					return true;
@@ -305,13 +353,6 @@ public class AlgiseWhiteHeuristic {
 
 				}
 				return true;
-			}
-
-
-
-
-
-
-
-
+			}*/
+			
 }
