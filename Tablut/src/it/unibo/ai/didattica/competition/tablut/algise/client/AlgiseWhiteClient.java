@@ -19,7 +19,7 @@ public class AlgiseWhiteClient {
 			 * Invocazione senza argomenti, setto i parametri di default per giocare in locale
 			 */
 			System.out.println("Invocazione senza argomenti, settaggio a default");
-			array = new String[]{"WHITE", "60", "localhost"};
+			array = new String[]{"WHITE", "30", "localhost"};
 		}
 		else if(args.length==1)
 		{

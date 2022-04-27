@@ -67,8 +67,10 @@ public class AlgiseBlackHeuristic {
 
 	//Pesi
 	private double BLACK_WEIGHT = 6.0;
-	private double WHITE_WEIGHT = 8.0;
+	private double WHITE_WEIGHT = 10.0;
 	private double FREE_WAY_FOR_KING = 15.0;
+	private double KING_BONUS = 9.0 ;
+	private double ACCERCHIAMENTO_WEIGHT = 900;
 	//private double WHITE_TO_CAPTURE_WEIGHT = 10.0;
 	//private double BLACK_WARNING_WEIGHT = 8.0;
 	//private double KING_TO_CAPTURE = 100.0;
@@ -114,7 +116,7 @@ public class AlgiseBlackHeuristic {
 		result-=this.pawnsW*this.WHITE_WEIGHT;
 		result+=this.blackNearKing*this.BLACK_WEIGHT;
 		result-=this.freeWayForKing*this.FREE_WAY_FOR_KING;
-		result+=1000/this.totalDistanceFromBlackThroneCamps;
+		result+=this.ACCERCHIAMENTO_WEIGHT/this.totalDistanceFromBlackThroneCamps;
 
 		return result;
 	}
@@ -142,6 +144,7 @@ public class AlgiseBlackHeuristic {
 				else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
 					pawnsW++;
 					kingCoordinate = new Coordinate(i,j);
+					this.totalDistanceFromBlackThroneCamps+=getDistanceFromBlackThroneCamps(i, j)*this.KING_BONUS;
 				}
 				else if (state.getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString())) {
 					pawnsB++;
