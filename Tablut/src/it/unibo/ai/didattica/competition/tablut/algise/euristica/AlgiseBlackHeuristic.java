@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.unibo.ai.didattica.competition.tablut.algise.domain.Coordinate;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 
 public class AlgiseBlackHeuristic {
 
@@ -19,6 +20,7 @@ public class AlgiseBlackHeuristic {
 	private int blackNearKing; // pedine NERE vicine al RE
 	private int whiteNearKing; // pedine BIANCHE vicine al RE
 	private int freeWayForKing;
+	private int totalDistanceFromBlackThroneCamps; // per stabilire se stiamo accerchiando i bianchi
 
 	// Parametri da calcolare
 	private int pawnsB; // pedine NERE attuali
@@ -112,6 +114,7 @@ public class AlgiseBlackHeuristic {
 		result-=this.pawnsW*this.WHITE_WEIGHT;
 		result+=this.blackNearKing*this.BLACK_WEIGHT;
 		result-=this.freeWayForKing*this.FREE_WAY_FOR_KING;
+		result+=1000/this.totalDistanceFromBlackThroneCamps;
 
 		return result;
 	}
@@ -134,6 +137,7 @@ public class AlgiseBlackHeuristic {
 				// CALCOLO PEDINE NELLA BOARD
 				if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
 					pawnsW++;
+					this.totalDistanceFromBlackThroneCamps+=getDistanceFromBlackThroneCamps(i, j);
 				}
 				else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
 					pawnsW++;
@@ -387,6 +391,98 @@ public class AlgiseBlackHeuristic {
 	//		}
 	//		return true;
 	//	}
+	
+	/**
+	 * Metodo che calcola la distanza di una pedina da altre pedine nere, trono, accampamenti
+	 * @param row
+	 * @param column
+	 * @return
+	 */
+
+	
+	public int getDistanceFromBlackThroneCamps(int row, int column) {
+		int distanceResult = 0 ; 
+		
+		// calcolo distanza SOPRA
+		
+		distanceResult += getDistanceUp(row,column);
+		
+		//SOTTO
+		
+		distanceResult += getDistanceDown(row,column);
+		
+		//DESTRA
+		
+		distanceResult += getDistanceRight(row,column);
+		
+		//SINISTRA
+		
+		distanceResult += getDistanceLeft(row,column);
+		
+		return distanceResult;
+	}
+	
+	public int getDistanceUp(int row, int column) {
+		int dstResult = 0 ;
+		boolean fine = false ;
+		for (int i = row-1 ; i>=0 && !fine; i--) {
+			if (this.state.getPawn(i, column).equalsPawn(State.Pawn.BLACK.toString())
+					|| this.state.getPawn(i, column).equalsPawn(State.Pawn.THRONE.toString())
+					|| camps.contains(state.getBox(i, column)))
+				fine = true;
+			else 
+				dstResult++;
+		}
+		
+		return dstResult;
+	}
+	
+	public int getDistanceDown(int row, int column) {
+		int dstResult = 0 ;
+		boolean fine = false ;
+		for (int i = row+1 ; i<this.state.getBoard().length && !fine; i++) {
+			if (this.state.getPawn(i, column).equalsPawn(State.Pawn.BLACK.toString())
+					|| this.state.getPawn(i, column).equalsPawn(State.Pawn.THRONE.toString())
+					|| camps.contains(state.getBox(i, column)))
+				fine = true;
+			else 
+				dstResult++;
+		}
+		
+		return dstResult;
+	}
+	
+	public int getDistanceRight(int row, int column) {
+		int dstResult = 0 ;
+		boolean fine = false ;
+		
+		for (int i = column+1 ; i<state.getBoard().length && !fine; i++) {
+			if (this.state.getPawn(row, i).equalsPawn(State.Pawn.BLACK.toString())
+					|| this.state.getPawn(row, i).equalsPawn(State.Pawn.THRONE.toString())
+					|| camps.contains(state.getBox(row, i)))
+				fine = true;
+			else 
+				dstResult++;
+		}
+		
+		return dstResult;
+	}
+	
+	public int getDistanceLeft(int row, int column) {
+		int dstResult = 0;
+		boolean fine = false;
+		
+		for (int i = column-1 ; i>=0 && !fine; i--) {
+			if (this.state.getPawn(row, i).equalsPawn(State.Pawn.BLACK.toString())
+					|| this.state.getPawn(row, i).equalsPawn(State.Pawn.THRONE.toString())
+					|| camps.contains(state.getBox(row, i)))
+				fine = true;
+			else 
+				dstResult++;
+		}
+		
+		return dstResult;
+	}
 
 
 
