@@ -81,7 +81,7 @@ public class AlgiseClient extends TablutClient {
 			// se sono WHITE
 			if (this.getPlayer().equals(State.Turn.WHITE)) {
 
-				// se è il mio turno (WHITE)
+				// se Ã¨ il mio turno (WHITE)
 				if (state.getTurn().equals(StateTablut.Turn.WHITE)) {
 
 					System.out.println("\n Cercando la prossima mossa... ");
@@ -100,7 +100,7 @@ public class AlgiseClient extends TablutClient {
 					 
 				}
 
-				// se è il turno dell'avversario (BLACK)
+				// se Ã¨ il turno dell'avversario (BLACK)
 				else if (state.getTurn().equals(StateTablut.Turn.BLACK)) {
 					System.out.println("Aspettando la mossa dell'avversario...\n");
 				}
@@ -175,16 +175,14 @@ public class AlgiseClient extends TablutClient {
 	 */
 	public void salutaAlgise() {
 		System.out.println("\r\n"
-				+ "+---------------------------Tablut Game Challenge 2022---------------------------------+"
-				+ "| ________  ___       ________  ___  ________  _______      \r\n                       |"
-				+ "||\\   __  \\|\\  \\     |\\   ____\\|\\  \\|\\   ____\\|\\  ___ \\     \r\n           |"
-				+ "|\\ \\  \\|\\  \\ \\  \\    \\ \\  \\___|\\ \\  \\ \\  \\___|\\ \\   __/|    \r\n      |"
-				+ "| \\ \\   __  \\ \\  \\    \\ \\  \\  __\\ \\  \\ \\_____  \\ \\  \\_|/__  \r\n        |"
-				+ "|  \\ \\  \\ \\  \\ \\  \\____\\ \\  \\|\\  \\ \\  \\|____|\\  \\ \\  \\_|\\ \\ \r\n   |" 
-				+ "|   \\ \\__\\ \\__\\ \\_______\\ \\_______\\ \\__\\____\\_\\  \\ \\_______\\\r\n       |"
-				+ "|    \\|__|\\|__|\\|_______|\\|_______|\\|__|\\_________\\|_______|\r\n                |"
-				+ "|																					  |"		
-				+ "+--------------------------Comastri, Filoni, Scagliarini-------------------------------+                                      \\|_________|         \r\n"
+				+ " ________  ___       ________  ___  ________  _______      \r\n"
+				+ "|\\   __  \\|\\  \\     |\\   ____\\|\\  \\|\\   ____\\|\\  ___ \\     \r\n"
+				+ "\\ \\  \\|\\  \\ \\  \\    \\ \\  \\___|\\ \\  \\ \\  \\___|\\ \\   __/|    \r\n"
+				+ " \\ \\   __  \\ \\  \\    \\ \\  \\  __\\ \\  \\ \\_____  \\ \\  \\_|/__  \r\n"
+				+ "  \\ \\  \\ \\  \\ \\  \\____\\ \\  \\|\\  \\ \\  \\|____|\\  \\ \\  \\_|\\ \\ \r\n"
+				+ "   \\ \\__\\ \\__\\ \\_______\\ \\_______\\ \\__\\____\\_\\  \\ \\_______\\\r\n"
+				+ "    \\|__|\\|__|\\|_______|\\|_______|\\|__|\\_________\\|_______|\r\n"
+				+ "                                      \\|_________|         \r\n"
 				+ "                                                           \r\n"
 				+ "                                                           \r\n"
 				+ "");
