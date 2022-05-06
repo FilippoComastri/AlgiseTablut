@@ -15,24 +15,15 @@ public class AlgiseWhiteHeuristic {
 	private List<String> escape;
 	private List<String> nearsThrone;
 	private String throne;
-	private double[][] pesi_posizioni_bianco=new double[][]
-		{{0,  1,-3,-6, -6, -6,-3, 1, 0},
-		{1,  1, 1,-3, -6, -3, 1, 1, 1},
-		{-3, 1, 2, 1,  0,  1, 2, 1, -3},
-		{-6,-3, 1, 2,  0,  2, 1,-3, -6},
-		{-6,-6, 0, 0, -6,  0, 0,-6, -6},
-		{-6,-3, 1, 2,  0,  2, 1,-3, -6},
-		{-3, 1, 2, 1,  0,  1, 2, 1, -3},
-		{1,  1, 1,-3, -6, -3, 1, 1, 1},
-		{0,  1,-3,-6, -6,-6,-3, 1, 0}};
+	
 
 	private double[][] pesi_posizione_re=new double[][]
 			{{0, 20, 20,-6, -6, -6,20, 20, 0},
 			{20, 1, 1, -5, -6, -5, 1,  1, 20},
 			{20, 1, 4,  1, -2,  1, 4,  1, 20},
-			{-6,-5, 1,  1,  0,  1, 1, -5, -6},
-			{-6,-6,-2,  0,  2,  0,-2, -6, -6},
-			{-6,-5, 1,  1,  0,  1, 1, -5, -6},
+			{-6,-5, 1,  1,  1,  1, 1, -5, -6},
+			{-6,-6,-2,  1,  2,  1,-2, -6, -6},
+			{-6,-5, 1,  1,  1,  1, 1, -5, -6},
 			{20, 1, 4,  1, -2,  1, 4,  1, 20},
 			{20, 1, 1, -5, -6, -5, 1,  1, 20},
 			{0, 20, 20,-6, -6, -6,20, 20, 0}};
@@ -48,34 +39,16 @@ public class AlgiseWhiteHeuristic {
 			private double CRStartegicheFree;
 
 			
-			 /*
-			private int blackRisk; // pedine NERE a rischio cattura (una bianca, un accampamento o trono vicina) 
-			private int whiteNearKing; // pedine BIANCHE vicine al RE
-			 */
-
-			//TODO King at risk 
-			//TODO Valore alle posizioni
-			//TODO Provare HASH MAP per non ricalcolare euristica di stati
-			//TODO Usare le posizioni invece che per tutte le pedine solo per il RE e valutare la mossa usando anche i quadranti
-
 			// PESI
-			private double REMAINING_BLACK_WEIGHT = 10.0;
+			private double REMAINING_BLACK_WEIGHT = 12.0;
 			private double REMAINING_WHITE_WEIGHT = 22.0;
 			private double FREE_WAY_KING_WEIGHT = 50.0;
 			private double BLACK_NEAR_KING_WEIGHT = 6.0;
-			private double POSITION_WEIGHT = 0.5;
+			private double POSITION_WEIGHT = 0.4;
 			private double KING_POSITION_WEIGHT = 2;
-			
-			/*
-			private double BLACK_RISCK_WEIGHT = 8.0;
-			private double WHITE_NEAR_KING_WEIGHT = 7.0; */
-			
-
 
 			private static int LOOSE = -1;
 			private static int WIN = 1;
-
-
 
 			public AlgiseWhiteHeuristic (State state) {
 				this.state = state;
@@ -109,7 +82,7 @@ public class AlgiseWhiteHeuristic {
 					
 					return Double.MAX_VALUE;
 				}
-				result-= pawnsB*REMAINING_BLACK_WEIGHT;
+				result+=(16- pawnsB)*REMAINING_BLACK_WEIGHT;
 				result+= pawnsW*REMAINING_WHITE_WEIGHT;
 				result+= freeWayForKing*FREE_WAY_KING_WEIGHT;
 				result-= blackNearKing*BLACK_NEAR_KING_WEIGHT;
@@ -139,7 +112,6 @@ public class AlgiseWhiteHeuristic {
 						// CALCOLO PEDINE SULLA BOARD e LORO PESO
 						if(state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())) {
 							pawnsW++;
-							this.positions_sum+=this.pesi_posizioni_bianco[i][j];
 						}
 						else if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())){
 							pawnsW++;
@@ -281,78 +253,5 @@ public class AlgiseWhiteHeuristic {
 				
 				return soloRe + vuote*3 - soloNere*0.5;
 			}
-
-
-
-			// Calcolo pedine NERE a rischio cattura
-			/*
-	private void countBlackRisk() {
-		for (int i = 0; i < state.getBoard().length; i++) {
-			for (int j = 0; j < state.getBoard()[i].length; j++) {
-				if(state.getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString()) &&
-						(whiteNearAttack(i,j,state) || throneNearAttack(i,j, state) || campsNearAttack(i,j, state) ))
-							blackRisk++;
-
-
-			}
-		}
-	}
-			 */
-
-			/*private boolean whiteNearAttack(int row, int column, State state) {
-				if(row > 0 && state.getPawn(row-1,column).equalsPawn(State.Pawn.WHITE.toString()) && 
-						row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
-					return true;
-				if( row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.WHITE.toString()) && 
-						row > 0  && state.getPawn(row-1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
-					return true;
-				if(column > 0 && state.getPawn(row,column-1).equalsPawn(State.Pawn.WHITE.toString()) && 
-						column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.EMPTY.toString()) )
-					return true;
-				if( column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.WHITE.toString()) && 
-						column > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
-					return true;
-
-				return false;
-
-			}
-
-			private boolean throneNearAttack(int row, int column, State state) {
-				if(row > 0 && state.getPawn(row-1,column).equalsPawn(State.Pawn.THRONE.toString()) && 
-						row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
-					return true;
-				if( row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.THRONE.toString()) && 
-						row > 0  && state.getPawn(row-1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
-					return true;
-				if(column > 0 && state.getPawn(row,column-1).equalsPawn(State.Pawn.THRONE.toString()) && 
-						column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.EMPTY.toString()) )
-					return true;
-				if( column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.THRONE.toString()) && 
-						column > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
-					return true;
-
-				return false;
-			}
-
-			private boolean campsNearAttack(int row, int column, State state) {
-				boolean blackInCamp = camps.contains(state.getBox(row, column));
-				if (blackInCamp) return false;
-				else {
-					if(row > 0 && camps.contains(state.getBox(row-1, column)) && 
-							row < state.getBoard().length-1 && state.getPawn(row+1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
-						return true;
-					if( row < state.getBoard().length-1 && camps.contains(state.getBox(row+1, column)) && 
-							row > 0  && state.getPawn(row-1,column).equalsPawn(State.Pawn.EMPTY.toString()) )
-						return true;
-					if(column > 0 && camps.contains(state.getBox(row, column-1)) && 
-							column < state.getBoard().length-1 && state.getPawn(row,column+1).equalsPawn(State.Pawn.EMPTY.toString()) )
-						return true;
-					if( column < state.getBoard().length-1 && camps.contains(state.getBox(row, column+1)) && 
-							column > 0  && state.getPawn(row,column-1).equalsPawn(State.Pawn.EMPTY.toString()) )
-						return true;
-
-				}
-				return true;
-			}*/
 			
 }
