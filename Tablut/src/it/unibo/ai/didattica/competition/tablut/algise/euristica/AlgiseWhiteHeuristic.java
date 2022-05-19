@@ -59,11 +59,11 @@ public class AlgiseWhiteHeuristic {
 			//TODO Usare le posizioni invece che per tutte le pedine solo per il RE e valutare la mossa usando anche i quadranti
 
 			// PESI
-			private double REMAINING_BLACK_WEIGHT = 10.0;
+			private double REMAINING_BLACK_WEIGHT = 12.0;
 			private double REMAINING_WHITE_WEIGHT = 22.0;
 			private double FREE_WAY_KING_WEIGHT = 50.0;
 			private double BLACK_NEAR_KING_WEIGHT = 6.0;
-			private double POSITION_WEIGHT = 0.5;
+			private double POSITION_WEIGHT = 0;
 			private double KING_POSITION_WEIGHT = 2;
 			
 			/*
@@ -98,18 +98,18 @@ public class AlgiseWhiteHeuristic {
 				resetFields();	
 				int state = extractFields();
 
-				// se non c'è il re ho perso
+				// se non c'ï¿½ il re ho perso
 				if(state == LOOSE)
 				{
 					
 					return Double.MIN_VALUE;
-				}// se il re è in escape ho vinto
+				}// se il re ï¿½ in escape ho vinto
 				else if (state == WIN)
 				{
 					
 					return Double.MAX_VALUE;
 				}
-				result-= pawnsB*REMAINING_BLACK_WEIGHT;
+				result+= (16-pawnsB)*REMAINING_BLACK_WEIGHT;
 				result+= pawnsW*REMAINING_WHITE_WEIGHT;
 				result+= freeWayForKing*FREE_WAY_KING_WEIGHT;
 				result-= blackNearKing*BLACK_NEAR_KING_WEIGHT;
@@ -155,10 +155,10 @@ public class AlgiseWhiteHeuristic {
 				} // for i
 
 				// STATISTICHE RE
-				// Se non c'è il re => HO PERSO (termino)
+				// Se non c'ï¿½ il re => HO PERSO (termino)
 				if(this.kingCoordinate==null) {
 					return LOOSE;
-				}// Se il re è salvo => HO VINTO (termino)
+				}// Se il re ï¿½ salvo => HO VINTO (termino)
 				else if (escape.contains(state.getBox(this.kingCoordinate.getX(), this.kingCoordinate.getY()))) {
 					return WIN;
 				}
